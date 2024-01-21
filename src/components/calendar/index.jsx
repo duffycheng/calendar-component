@@ -7,6 +7,8 @@ import {
 function Calendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const goToPreviousMonth = () => {
     if (currentMonth === 0) {
@@ -26,6 +28,19 @@ function Calendar() {
     }
   };
 
+  const selectDate = (date) => {
+    if (!startDate && !endDate) {
+      setStartDate(date);
+      setEndDate(date);
+    } else if (!startDate) {
+      setStartDate(date);
+    } else if (date >= startDate) {
+      setEndDate(date);
+    } else if (date < startDate) {
+      setStartDate(date);
+    }
+  };
+
   const getDaysInMonth = (month, year) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -33,6 +48,8 @@ function Calendar() {
   const generateCalendar = () => {
     const prevMonth = currentMonth - 1 < 0 ? 11 : currentMonth - 1;
     const prevMonthYear = currentMonth - 1 < 0 ? currentYear - 1 : currentYear;
+    const nextMonth = currentMonth + 1 > 11 ? 0 : currentMonth + 1;
+    const nextMonthYear = currentMonth + 1 > 11 ? currentYear + 1 : currentYear;
 
     const daysInCurrentMonth = getDaysInMonth(currentMonth, currentYear);
     const daysInPrevMonth = getDaysInMonth(prevMonth, prevMonthYear);
@@ -47,23 +64,32 @@ function Calendar() {
       let week = [];
       for (let j = 0; j < 7; j++) {
         if (i === 0 && j < startDayOfMonth) {
+          const day = prevMonthDay++;
           week.push({
-            day: prevMonthDay++,
+            day,
             isToday: false,
             isCurrentMonth: false,
+            date: new Date(prevMonthYear, prevMonth, day),
           });
         } else if (day > daysInCurrentMonth) {
+          const day = nextMonthDay++;
           week.push({
-            day: nextMonthDay++,
+            day,
             isToday: false,
             isCurrentMonth: false,
+            date: new Date(nextMonthYear, nextMonth, day),
           });
         } else {
           const isToday =
             currentYear === today.getFullYear() &&
             currentMonth === today.getMonth() &&
             day === today.getDate();
-          week.push({ day, isToday, isCurrentMonth: true });
+          week.push({
+            day,
+            isToday,
+            isCurrentMonth: true,
+            date: new Date(currentYear, currentMonth, day),
+          });
           day++;
         }
       }
@@ -75,14 +101,16 @@ function Calendar() {
   const calendar = generateCalendar();
 
   const getDayClassName = (dayObj) => {
+    const className = [];
     if (dayObj.isToday) {
-      return "today";
+      className.push("today");
     } else if (!dayObj.isCurrentMonth) {
-      return "not-current-month";
-    } else if (dayObj.isActived) {
-      return "active";
+      className.push("not-current-month");
     }
-    return "";
+    if (startDate && dayObj.date >= startDate && dayObj.date <= endDate) {
+      className.push("active");
+    }
+    return className.join(" ");
   };
 
   return (
@@ -102,18 +130,22 @@ function Calendar() {
             {">"}
           </MonthSwitch>
         </CalendarCaption>
-        <thead>
+        {/* <thead>
           <tr>
             {["日", "一", "二", "三", "四", "五", "六"].map((d) => (
               <th key={d}>{d}</th>
             ))}
           </tr>
-        </thead>
+        </thead> */}
         <tbody>
           {calendar.map((week, i) => (
             <tr key={`week-${i}`}>
               {week.map((dayObj, j) => (
-                <td key={`day-${i}-${j}`} className={getDayClassName(dayObj)}>
+                <td
+                  key={`day-${i}-${j}`}
+                  className={getDayClassName(dayObj)}
+                  onClick={() => selectDate(dayObj.date)}
+                >
                   {dayObj ? `${dayObj.day}日` : ""}
                 </td>
               ))}

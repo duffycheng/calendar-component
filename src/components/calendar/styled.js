@@ -4,23 +4,24 @@ export const CalendarTable = styled.table`
   width: 350px;
   height: 240px;
   font-size: 16px;
+  border-collapse: collapse;
   td {
     width: 50px;
     height: 36px;
-    text-align: right;
+    text-align: center;
     cursor: pointer;
     &.today {
       background-color: #ffff76;
     }
     &.not-current-month {
-      cursor: default;
       color: #757575;
     }
-    &.active {
-      background-color: #006edc;
-    }
     &:hover {
-      background-color: e6e6e6;
+      background-color: #e6e6e6;
+    }
+    &.active {
+      color: #fff;
+      background-color: #006edc;
     }
   }
 `;
