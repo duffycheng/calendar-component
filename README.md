@@ -42,10 +42,15 @@ To run the code, follow these steps:
 
 1. Start the development server:
 
-`bash
+```bash
 npm start
 ```
 
 2. Open your browser and navigate to http://localhost:3000.
 
+3. Run test
+
+```bash
+npm run test
+```
 

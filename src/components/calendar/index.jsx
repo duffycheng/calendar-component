@@ -107,6 +107,9 @@ function Calendar() {
     } else if (!dayObj.isCurrentMonth) {
       className.push("not-current-month");
     }
+    if (dayObj.isCurrentMonth) {
+      className.push("current-month");
+    }
     if (startDate && dayObj.date >= startDate && dayObj.date <= endDate) {
       className.push("active");
     }
@@ -143,6 +146,7 @@ function Calendar() {
               {week.map((dayObj, j) => (
                 <td
                   key={`day-${i}-${j}`}
+                  data-testid="day"
                   className={getDayClassName(dayObj)}
                   onClick={() => selectDate(dayObj.date)}
                 >
